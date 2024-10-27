@@ -1,0 +1,10 @@
+[package]
+name = "deno-runtime-test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+deno_core = "0.314.2"
+deno_fs = "0.84.0"
+deno_runtime = "0.183.0"
+tokio = "1.41.0"
