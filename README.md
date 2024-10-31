@@ -5,7 +5,7 @@ Examples of how to create a JavaScript runtime using the Deno Runtime. Useful fo
 - Handling permissions with custom prompter
 - Importing from https sources like esm.sh and handling TypeScript files
 
-The `all_the_things.ts` file is a good one showcasing all three features: importing from https sources, handling permissions, and using extensions. You can find the implementation of everything in the `src/` directory:
+The `all_the_things.ts` file is a good one showcasing all three features: importing from https sources, handling permissions, and using extensions. You can find the implementation of everything in the `src/` directory on these three files:
 - `main.rs` is the Rust code that bootstraps the runtime, defines the extension and handles the permissions.
 - `bootstrap.js` is the entry point for the JavaScript side, here you sugar the extension code.
 - `module_loader.rs` is the code that strips the TypeScript from the files so that they can be loaded as regular JavaScript files and imports from https sources and files.
