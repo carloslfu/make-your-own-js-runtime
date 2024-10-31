@@ -1,6 +1,7 @@
-import { op_hello } from "ext:core/ops";
-function hello(str) {
-  op_hello(str);
+import { example_custom_op } from "ext:core/ops";
+
+function exampleCustomOp(str) {
+  return example_custom_op(str);
 }
 
-globalThis.Extension = { hello };
+globalThis.ExampleExtension = { exampleCustomOp };

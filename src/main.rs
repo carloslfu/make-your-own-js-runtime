@@ -26,16 +26,17 @@ use deno_runtime::worker::WorkerServiceOptions;
 use colored::*;
 
 use module_loader::TypescriptModuleLoader;
-
-#[op2(fast)]
-fn op_hello(#[string] text: &str) {
+#[op2]
+#[string]
+fn example_custom_op(#[string] text: &str) -> String {
     println!("Hello {} from an op!", text);
+    text.to_string() + " from Rust!"
 }
 
 deno_runtime::deno_core::extension!(
-  hello_runtime,
-  ops = [op_hello],
-  esm_entry_point = "ext:hello_runtime/bootstrap.js",
+  example_extension,
+  ops = [example_custom_op],
+  esm_entry_point = "ext:example_extension/bootstrap.js",
   esm = [dir "src", "bootstrap.js"]
 );
 
@@ -79,7 +80,7 @@ impl PermissionPrompter for CustomPrompter {
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), AnyError> {
-    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./test-files/fs.ts");
+    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./test-files/all_the_things.ts");
     let main_module = ModuleSpecifier::from_file_path(js_path).unwrap();
     let fs = Arc::new(RealFs);
     let permission_desc_parser = Arc::new(RuntimePermissionDescriptorParser::new(fs.clone()));
@@ -112,7 +113,7 @@ async fn main() -> Result<(), AnyError> {
             fs,
         },
         WorkerOptions {
-            extensions: vec![hello_runtime::init_ops_and_esm()],
+            extensions: vec![example_extension::init_ops_and_esm()],
             ..Default::default()
         },
     );
