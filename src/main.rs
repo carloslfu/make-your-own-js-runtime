@@ -37,27 +37,36 @@ deno_runtime::deno_core::extension!(
 );
 
 struct CustomPrompter;
-
 impl PermissionPrompter for CustomPrompter {
     fn prompt(
         &mut self,
-        _message: &str,
-        _name: &str,
-        _api_name: Option<&str>,
-        _is_unary: bool,
+        message: &str,
+        name: &str,
+        api_name: Option<&str>,
+        is_unary: bool,
     ) -> PromptResponse {
         println!(
-            "Prompting for permission, message: {}, name: {}, api_name: {:?}, is_unary: {}",
-            _message, _name, _api_name, _is_unary
+            "Script is trying to access APIs and needs permission:\nMessage: {}\nName: {}\nAPI: {:?}\nIs unary: {}",
+            message, name, api_name, is_unary
         );
+        println!("Allow? [y/n]");
 
-        PromptResponse::Allow
+        let mut input = String::new();
+        if std::io::stdin().read_line(&mut input).is_ok() {
+            match input.trim().to_lowercase().as_str() {
+                "y" | "yes" => PromptResponse::Allow,
+                _ => PromptResponse::Deny,
+            }
+        } else {
+            println!("Failed to read input, denying permission");
+            PromptResponse::Deny
+        }
     }
 }
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), AnyError> {
-    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./fs.ts");
+    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./test-files/fs.ts");
     let main_module = ModuleSpecifier::from_file_path(js_path).unwrap();
     eprintln!("Running {main_module}...");
     let fs = Arc::new(RealFs);
