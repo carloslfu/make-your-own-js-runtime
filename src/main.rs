@@ -1,13 +1,16 @@
 #![allow(clippy::print_stdout)]
 #![allow(clippy::print_stderr)]
 
+mod module_loader;
+
+use std::cell::RefCell;
+use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 
 use deno_runtime::deno_core::error::AnyError;
 use deno_runtime::deno_core::op2;
-use deno_runtime::deno_core::FsModuleLoader;
 use deno_runtime::deno_core::ModuleSpecifier;
 use deno_runtime::deno_fs::RealFs;
 use deno_runtime::deno_permissions::PermissionsContainer;
@@ -15,6 +18,7 @@ use deno_runtime::permissions::RuntimePermissionDescriptorParser;
 use deno_runtime::worker::MainWorker;
 use deno_runtime::worker::WorkerOptions;
 use deno_runtime::worker::WorkerServiceOptions;
+use module_loader::TypescriptModuleLoader;
 
 #[op2(fast)]
 fn op_hello(#[string] text: &str) {
@@ -30,15 +34,22 @@ deno_runtime::deno_core::extension!(
 
 #[tokio::main]
 async fn main() -> Result<(), AnyError> {
-    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/main.js");
+    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./main.ts");
     let main_module = ModuleSpecifier::from_file_path(js_path).unwrap();
     eprintln!("Running {main_module}...");
     let fs = Arc::new(RealFs);
     let permission_desc_parser = Arc::new(RuntimePermissionDescriptorParser::new(fs.clone()));
+
+    let source_map_store = Rc::new(RefCell::new(HashMap::new()));
+
     let mut worker = MainWorker::bootstrap_from_options(
         main_module.clone(),
         WorkerServiceOptions {
-            module_loader: Rc::new(FsModuleLoader),
+            module_loader: Rc::new(TypescriptModuleLoader {
+                source_maps: source_map_store,
+            }),
+            // File only loader
+            // module_loader: Rc::new(FsModuleLoader),
             permissions: PermissionsContainer::allow_all(permission_desc_parser),
             blob_store: Default::default(),
             broadcast_channel: Default::default(),

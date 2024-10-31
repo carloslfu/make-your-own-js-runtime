@@ -311,6 +311,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
 
 [[package]]
+name = "base64"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+
+[[package]]
 name = "base64-simd"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -832,10 +838,13 @@ dependencies = [
 name = "deno-runtime-test"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "deno_ast 0.43.1",
  "deno_core",
  "deno_fs",
  "deno_runtime",
  "tokio",
+ "ureq",
 ]
 
 [[package]]
@@ -844,8 +853,49 @@ version = "0.42.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b2b9d03b1bbeeecdac54367f075d572131736d06c5be3bc49037855bc5ab1bbb"
 dependencies = [
- "base64",
- "deno_media_type",
+ "base64 0.21.7",
+ "deno_media_type 0.1.4",
+ "deno_terminal 0.1.1",
+ "dprint-swc-ext",
+ "once_cell",
+ "percent-encoding",
+ "serde",
+ "sourcemap 9.0.0",
+ "swc_atoms",
+ "swc_common",
+ "swc_config",
+ "swc_config_macro",
+ "swc_ecma_ast",
+ "swc_ecma_codegen",
+ "swc_ecma_codegen_macros",
+ "swc_ecma_loader",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_classes",
+ "swc_ecma_transforms_macros",
+ "swc_ecma_transforms_proposal",
+ "swc_ecma_transforms_react",
+ "swc_ecma_transforms_typescript",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "swc_eq_ignore_macros",
+ "swc_macros_common",
+ "swc_visit",
+ "swc_visit_macros",
+ "text_lines",
+ "thiserror",
+ "unicode-width",
+ "url",
+]
+
+[[package]]
+name = "deno_ast"
+version = "0.43.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01cdd89f7a3327ee0ff50d472c5a841efb5d092f93a2406aae73f8f881cd5f13"
+dependencies = [
+ "base64 0.21.7",
+ "deno_media_type 0.2.1",
  "deno_terminal 0.1.1",
  "dprint-swc-ext",
  "once_cell",
@@ -991,7 +1041,7 @@ dependencies = [
  "aes",
  "aes-gcm",
  "aes-kw",
- "base64",
+ "base64 0.21.7",
  "cbc",
  "const-oid",
  "ctr",
@@ -1027,7 +1077,7 @@ version = "0.198.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18fca191873c49270a0a8ff0afe9082d33fa1cd341a939c85fdcd6a4d9444191"
 dependencies = [
- "base64",
+ "base64 0.21.7",
  "bytes",
  "data-url",
  "deno_core",
@@ -1109,7 +1159,7 @@ checksum = "90a18bfc82060489666667ad1e6b6491f48c0fc9a1a2651ecc7f17ac0556d09b"
 dependencies = [
  "async-compression",
  "async-trait",
- "base64",
+ "base64 0.21.7",
  "brotli 6.0.0",
  "bytes",
  "cache_control",
@@ -1170,7 +1220,7 @@ checksum = "fe6667bc7f12bef23cd5d0a51ca7338e390172dcb2fe5ce02049ec6422d45d66"
 dependencies = [
  "anyhow",
  "async-trait",
- "base64",
+ "base64 0.21.7",
  "bytes",
  "chrono",
  "deno_core",
@@ -1200,6 +1250,17 @@ name = "deno_media_type"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8978229b82552bf8457a0125aa20863f023619cfc21ebb007b1e571d68fd85b"
+dependencies = [
+ "data-url",
+ "serde",
+ "url",
+]
+
+[[package]]
+name = "deno_media_type"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fcf552fbdedbe81c89705349d7d2485c7051382b000dfddbdbf7fc25931cf83"
 dependencies = [
  "data-url",
  "serde",
@@ -1263,7 +1324,7 @@ dependencies = [
  "aead-gcm-stream",
  "aes",
  "async-trait",
- "base64",
+ "base64 0.21.7",
  "blake2",
  "brotli 6.0.0",
  "bytes",
@@ -1274,7 +1335,7 @@ dependencies = [
  "deno_fetch",
  "deno_fs",
  "deno_io",
- "deno_media_type",
+ "deno_media_type 0.1.4",
  "deno_net",
  "deno_package_json",
  "deno_path_util",
@@ -1412,7 +1473,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78f05597f2b7ce2e9a637622a7c1bb00a228f5586ed0372f84e3ea9b6bb76d66"
 dependencies = [
  "color-print",
- "deno_ast",
+ "deno_ast 0.42.2",
  "deno_broadcast_channel",
  "deno_cache",
  "deno_canvas",
@@ -2078,7 +2139,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26da0c7b5cef45c521a6f9cdfffdfeb6c9f5804fbac332deb5ae254634c7a6be"
 dependencies = [
- "base64",
+ "base64 0.21.7",
  "bytes",
  "http-body-util",
  "hyper 1.5.0",
@@ -3423,7 +3484,7 @@ checksum = "5a388e7b6aeb0504752a54202028194a9a91c9d669f3021dce2af5143cc1ead3"
 dependencies = [
  "anyhow",
  "async-trait",
- "deno_media_type",
+ "deno_media_type 0.1.4",
  "deno_package_json",
  "deno_path_util",
  "futures",
@@ -4307,7 +4368,7 @@ version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b91f7eff05f748767f183df4320a63d6936e9c6107d97c9e6bdd9784f4289c94"
 dependencies = [
- "base64",
+ "base64 0.21.7",
  "bitflags 2.6.0",
  "serde",
  "serde_derive",
@@ -5243,7 +5304,7 @@ version = "0.191.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "76c76d8b9792ce51401d38da0fa62158d61f6d80d16d68fe5b03ce4bf5fba383"
 dependencies = [
- "base64",
+ "base64 0.21.7",
  "dashmap",
  "indexmap",
  "once_cell",
@@ -5870,6 +5931,22 @@ name = "untrusted"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
+
+[[package]]
+name = "ureq"
+version = "2.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b74fc6b57825be3373f7054754755f03ac3a8f5d70015ccad699ba2029956f4a"
+dependencies = [
+ "base64 0.22.1",
+ "flate2",
+ "log",
+ "once_cell",
+ "rustls",
+ "rustls-pki-types",
+ "url",
+ "webpki-roots",
+]
 
 [[package]]
 name = "url"

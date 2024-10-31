@@ -7,4 +7,7 @@ edition = "2021"
 deno_core = "0.314.2"
 deno_fs = "0.84.0"
 deno_runtime = "0.183.0"
-tokio = "1.41.0"
+anyhow = "1"
+tokio = { version = "1.41.0", features = ["full"] }
+ureq = "2.10.1"
+deno_ast = { version = "0.43.1", features = ["transpiling"] }
