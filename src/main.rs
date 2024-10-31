@@ -22,6 +22,9 @@ use deno_runtime::permissions::RuntimePermissionDescriptorParser;
 use deno_runtime::worker::MainWorker;
 use deno_runtime::worker::WorkerOptions;
 use deno_runtime::worker::WorkerServiceOptions;
+
+use colored::*;
+
 use module_loader::TypescriptModuleLoader;
 
 #[op2(fast)]
@@ -46,8 +49,18 @@ impl PermissionPrompter for CustomPrompter {
         is_unary: bool,
     ) -> PromptResponse {
         println!(
-            "Script is trying to access APIs and needs permission:\nMessage: {}\nName: {}\nAPI: {:?}\nIs unary: {}",
-            message, name, api_name, is_unary
+            "{}\n{} {}\n{} {}\n{} {:?}\n{} {}",
+            "Script is trying to access APIs and needs permission:"
+                .yellow()
+                .bold(),
+            "Message:".bright_blue(),
+            message,
+            "Name:".bright_blue(),
+            name,
+            "API:".bright_blue(),
+            api_name,
+            "Is unary:".bright_blue(),
+            is_unary
         );
         println!("Allow? [y/n]");
 
@@ -68,7 +81,6 @@ impl PermissionPrompter for CustomPrompter {
 async fn main() -> Result<(), AnyError> {
     let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./test-files/fs.ts");
     let main_module = ModuleSpecifier::from_file_path(js_path).unwrap();
-    eprintln!("Running {main_module}...");
     let fs = Arc::new(RealFs);
     let permission_desc_parser = Arc::new(RuntimePermissionDescriptorParser::new(fs.clone()));
 
@@ -104,9 +116,7 @@ async fn main() -> Result<(), AnyError> {
             ..Default::default()
         },
     );
-    println!("Bootstrapped worker");
     worker.execute_main_module(&main_module).await?;
-    println!("Executed main module");
     worker.run_event_loop(false).await?;
 
     println!("Exit code: {}", worker.exit_code());
