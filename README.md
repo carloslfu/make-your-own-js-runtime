@@ -20,3 +20,11 @@ These are useful guides that helped me undersand Deno's internals andhow to use 
     - Part 2: https://deno.com/blog/roll-your-own-javascript-runtime-pt2
     - Part 3: https://deno.com/blog/roll-your-own-javascript-runtime-pt3
 - Deno 2 internals by [Divy Srivastava](https://github.com/littledivy): https://littledivy.com/deno-2.html
+
+## Run it!
+
+You need to have Rust and Cargo installed: https://www.rust-lang.org/learn/get-started. Then run it with:
+
+```bash
+cargo run
+```
