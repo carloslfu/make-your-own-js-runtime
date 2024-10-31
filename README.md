@@ -1,6 +1,6 @@
 # Make your own JavaScript Runtime with Deno Runtime
 
-Examples of how to create a JavaScript runtime using the Deno Runtime. Useful for embedding and customizing Deno's runtime in your Rust application or creating a custom JavaScript runtime based on Deno's runtime. Deno Runtime has a permission model and architecture that makes it a great sandbox and you can write custom extensions and tap into their permissions. This repo showcases:
+This repo showcases how to create a JavaScript runtime using the Deno Runtime. This is useful for embedding and customizing Deno's runtime in your Rust application or creating a custom JavaScript runtime based on Deno's runtime. Deno Runtime has a permission model and architecture that makes it a great sandbox and you can write custom extensions and tap into their permissions. This repo showcases:
 - Writing a custom extension
 - Handling permissions with custom prompter
 - Importing from https sources like esm.sh and handling TypeScript files
