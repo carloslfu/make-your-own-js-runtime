@@ -32,9 +32,9 @@ deno_runtime::deno_core::extension!(
   esm = [dir "src", "bootstrap.js"]
 );
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), AnyError> {
-    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./main.ts");
+    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./fs.ts");
     let main_module = ModuleSpecifier::from_file_path(js_path).unwrap();
     eprintln!("Running {main_module}...");
     let fs = Arc::new(RealFs);
@@ -67,7 +67,12 @@ async fn main() -> Result<(), AnyError> {
             ..Default::default()
         },
     );
+    println!("Bootstrapped worker");
     worker.execute_main_module(&main_module).await?;
+    println!("Executed main module");
     worker.run_event_loop(false).await?;
+
+    println!("Exit code: {}", worker.exit_code());
+
     Ok(())
 }
