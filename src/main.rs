@@ -26,6 +26,7 @@ use deno_runtime::worker::WorkerServiceOptions;
 use colored::*;
 
 use module_loader::TypescriptModuleLoader;
+
 #[op2]
 #[string]
 fn example_custom_op(#[string] text: &str) -> String {
@@ -41,6 +42,7 @@ deno_runtime::deno_core::extension!(
 );
 
 struct CustomPrompter;
+
 impl PermissionPrompter for CustomPrompter {
     fn prompt(
         &mut self,
@@ -98,7 +100,7 @@ async fn main() -> Result<(), AnyError> {
             module_loader: Rc::new(TypescriptModuleLoader {
                 source_maps: source_map_store,
             }),
-            // File only loader
+            // File-only loader
             // module_loader: Rc::new(FsModuleLoader),
             permissions: permission_container,
             blob_store: Default::default(),
