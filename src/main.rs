@@ -84,11 +84,11 @@ impl PermissionPrompter for CustomPrompter {
 async fn main() -> Result<(), AnyError> {
     let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("./test-files/all_the_things.ts");
     let main_module = ModuleSpecifier::from_file_path(js_path).unwrap();
-    let fs = Arc::new(RealFs);
-    let permission_desc_parser = Arc::new(RuntimePermissionDescriptorParser::new(fs.clone()));
 
     let source_map_store = Rc::new(RefCell::new(HashMap::new()));
 
+    let fs = Arc::new(RealFs);
+    let permission_desc_parser = Arc::new(RuntimePermissionDescriptorParser::new(fs.clone()));
     let permission_container =
         PermissionsContainer::new(permission_desc_parser, Permissions::none_with_prompt());
 
