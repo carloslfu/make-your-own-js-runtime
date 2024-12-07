@@ -1,0 +1,7 @@
+{
+  "version": "4",
+  "remote": {
+    "https://esm.sh/cowsay@1.6.0": "84ac3fde04e08407e67da11d74a765ac028857a1c168a62c762a5394a3727681",
+    "https://esm.sh/v135/cowsay@1.6.0/denonext/cowsay.mjs": "347c6ef8ebfdaf0c07b4ae282ca184943d5c725ce224fbaf4545a40fd9d6ca04"
+  }
+}

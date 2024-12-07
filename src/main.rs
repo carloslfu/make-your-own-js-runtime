@@ -9,6 +9,7 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 
+use deno_core::error::JsStackFrame;
 use deno_runtime::deno_core::error::AnyError;
 use deno_runtime::deno_core::op2;
 use deno_runtime::deno_core::ModuleSpecifier;
@@ -27,18 +28,20 @@ use colored::*;
 
 use module_loader::TypescriptModuleLoader;
 
+static RUNTIME_SNAPSHOT: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/RUNJS_SNAPSHOT.bin"));
+
 #[op2]
 #[string]
-fn example_custom_op(#[string] text: &str) -> String {
+fn custom_op_example(#[string] text: &str) -> String {
     println!("Hello {} from an op!", text);
     text.to_string() + " from Rust!"
 }
 
-deno_runtime::deno_core::extension!(
-  example_extension,
-  ops = [example_custom_op],
-  esm_entry_point = "ext:example_extension/bootstrap.js",
-  esm = [dir "src", "bootstrap.js"]
+deno_core::extension!(
+    example_extension,
+    ops = [custom_op_example],
+    // esm_entry_point = "ext:example_extension/bootstrap.js",
+    // esm = [dir "src", "bootstrap.js"]
 );
 
 struct CustomPrompter;
@@ -50,6 +53,7 @@ impl PermissionPrompter for CustomPrompter {
         name: &str,
         api_name: Option<&str>,
         is_unary: bool,
+        _: Option<Vec<JsStackFrame>>,
     ) -> PromptResponse {
         println!(
             "{}\n{} {}\n{} {}\n{} {:?}\n{} {}",
@@ -94,6 +98,10 @@ async fn main() -> Result<(), AnyError> {
 
     set_prompter(Box::new(CustomPrompter));
 
+    println!("Starting worker");
+
+    let start_time = std::time::Instant::now();
+
     let mut worker = MainWorker::bootstrap_from_options(
         main_module.clone(),
         WorkerServiceOptions {
@@ -113,14 +121,32 @@ async fn main() -> Result<(), AnyError> {
             compiled_wasm_module_store: Default::default(),
             v8_code_cache: Default::default(),
             fs,
+            fetch_dns_resolver: Default::default(),
         },
         WorkerOptions {
-            extensions: vec![example_extension::init_ops_and_esm()],
+            startup_snapshot: Some(RUNTIME_SNAPSHOT),
+            // startup_snapshot: None,
+            extensions: vec![
+                example_extension::init_ops(),
+                // example_extension::init_ops_and_esm(),
+            ],
             ..Default::default()
         },
     );
+
+    let worker_init_time = std::time::Instant::now();
+    println!(
+        "Worker init time: {:?}",
+        worker_init_time.duration_since(start_time)
+    );
+
+    println!("Executing main module");
     worker.execute_main_module(&main_module).await?;
+    println!("Running event loop");
     worker.run_event_loop(false).await?;
+
+    let end_time = std::time::Instant::now();
+    println!("Time taken: {:?}", end_time.duration_since(start_time));
 
     println!("Exit code: {}", worker.exit_code());
 

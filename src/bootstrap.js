@@ -1,7 +1,8 @@
-import { example_custom_op } from "ext:core/ops";
+const { ops } = globalThis.Deno.core;
 
 function exampleCustomOp(str) {
-  return example_custom_op(str);
+  console.log("ops", Object.keys(ops));
+  return ops.custom_op_example(str);
 }
 
 globalThis.ExampleExtension = { exampleCustomOp };

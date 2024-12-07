@@ -8,6 +8,8 @@ const text = ExampleExtension.exampleCustomOp("Hello, World");
 
 const textPlusCowsay = text + "\n\n" + cowsay.say({ text: "🤠 🚀" });
 
+console.log(textPlusCowsay);
+
 const encoder = new TextEncoder();
 const data = encoder.encode(textPlusCowsay);
 
